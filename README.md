@@ -17,7 +17,7 @@ Before cloning the project, make sure you have the following installed:
 
 Clone this project from GitHub and navigate into the directory:
 
-git clone https://github.com/yourusername/laravel-pusher-realtime-chatApp.git
+git clone https://github.com/ahmadhanzla/laravel-pusher-realtime-chatApp.git
 cd laravel-pusher-realtime-chatApp
 
 ## Step 02: Install Dependencies
