@@ -7,13 +7,14 @@ use App\Models\ChatMessage;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Illuminate\Support\Collection;
 
 class Chat extends Component
 {
     public $users;
     public $selectedUser;
     public $newMessage = '';
-    public $messages = [];
+    public Collection $messages;
     public $loginID;
 
     public function mount()
@@ -21,6 +22,7 @@ class Chat extends Component
         $this->loginID = Auth::id();
         $this->users = User::where('id', '!=', $this->loginID)->latest()->get();
         $this->selectedUser = $this->users->first();
+        $this->messages = collect();
 
         if ($this->selectedUser) {
             $this->loadMessages();
@@ -56,6 +58,11 @@ class Chat extends Component
             ->get();
     }
 
+    public function refreshMessages()
+    {
+        $this->loadMessages();
+    }
+
     public function submit()
     {
         if (!$this->newMessage || !$this->selectedUser) return;
@@ -66,15 +73,15 @@ class Chat extends Component
             'message' => $this->newMessage,
         ]);
 
+        // ✅ Use Collection method
         $this->messages->push($message);
 
-        // FIX — clear input
+        // Clear input
         $this->newMessage = '';
         $this->dispatch('$refresh');
 
         broadcast(new MessageSent($message))->toOthers();
     }
-
 
     public function updatedNewMessage($value)
     {
@@ -99,6 +106,7 @@ class Chat extends Component
         $message = ChatMessage::find($payload['id'] ?? null);
 
         if ($message && $message->sender_id == $this->selectedUser->id) {
+            // ✅ Works because $messages is always a Collection
             $this->messages->push($message);
         }
     }
