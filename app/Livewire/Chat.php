@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class Chat extends Component
 {
@@ -80,7 +81,15 @@ class Chat extends Component
         $this->newMessage = '';
         $this->dispatch('$refresh');
 
-        broadcast(new MessageSent($message))->toOthers();
+        try {
+            broadcast(new MessageSent($message))->toOthers();
+        } catch (\Exception $e) {
+            Log::error('Broadcast failed: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            report($e);
+        }
     }
 
     public function updatedNewMessage($value)
