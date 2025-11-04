@@ -74,10 +74,8 @@ class Chat extends Component
             'message' => $this->newMessage,
         ]);
 
-        // ✅ Use Collection method
         $this->messages->push($message);
 
-        // Clear input
         $this->newMessage = '';
         $this->dispatch('$refresh');
 
@@ -115,7 +113,6 @@ class Chat extends Component
         $message = ChatMessage::find($payload['id'] ?? null);
 
         if ($message && $message->sender_id == $this->selectedUser->id) {
-            // ✅ Works because $messages is always a Collection
             $this->messages->push($message);
         }
     }
